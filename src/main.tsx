@@ -2,24 +2,24 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ArtifactFrame, ArtifactSyncer } from '@artifact/client/react'
 import { HOST_SCOPE } from '@artifact/client/api'
-import App from './App.tsx'
-import type { AccountData } from './types/account'
+import FilesView from './FilesView.tsx'
 import './index.css'
 
-const mockProfile: AccountData = {
-  name: 'Jane Doe'
+const mockFiles = {
+  'readme.txt': 'Hello Artifact',
+  'folder/info.txt': 'More info'
 }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ArtifactFrame
-      mockFiles={{ 'profile.json': mockProfile }}
+      mockFiles={mockFiles}
       mockFrameProps={{
         target: { did: HOST_SCOPE.did, repo: 'mock', branch: 'main' }
       }}
     >
       <ArtifactSyncer>
-        <App />
+        <FilesView />
       </ArtifactSyncer>
     </ArtifactFrame>
   </StrictMode>
