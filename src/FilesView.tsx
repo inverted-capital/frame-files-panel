@@ -116,6 +116,8 @@ const FilesView: React.FC = () => {
     isDefault: b === currentBranch
   }))
 
+  const isAtRoot = !currentPath
+
   return (
     <div className="animate-fadeIn h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
@@ -180,27 +182,32 @@ const FilesView: React.FC = () => {
       {currentRepo && (
         <div className="bg-white rounded-lg border border-gray-200 p-3 mb-4 flex items-center">
           <div className="flex items-center">
+            <button
+              onClick={handleNavigateUp}
+              disabled={isAtRoot}
+              className={`flex items-center mr-3 px-2 py-1 rounded transition-colors ${
+                isAtRoot
+                  ? 'text-gray-400 cursor-not-allowed'
+                  : 'text-blue-600 hover:text-blue-800 hover:bg-blue-50'
+              }`}
+            >
+              <ArrowUp size={16} className="mr-1" />
+              <span>Up</span>
+            </button>
+            
             <span className="text-gray-500 mr-2">Path:</span>
             <button className="flex items-center text-blue-600 hover:text-blue-800 mr-1">
-              {<Code size={16} className="mr-1" />}
+              <Code size={16} className="mr-1" />
               <span className="font-medium">{currentRepo}</span>
             </button>
-            <span className="text-gray-400 mx-1">/</span>
+            
+            {currentPath && (
+              <>
+                <span className="text-gray-400 mx-1">/</span>
+                <span className="text-gray-600">{currentPath}</span>
+              </>
+            )}
           </div>
-
-          {currentPath && (
-            <div className="flex items-center">
-              <button
-                onClick={handleNavigateUp}
-                className="flex items-center text-blue-600 hover:text-blue-800 mr-1"
-              >
-                <ArrowUp size={16} className="mr-1" />
-                <span>Up</span>
-              </button>
-              <span className="text-gray-400 mx-1">•</span>
-              <span className="text-gray-600">{currentPath}</span>
-            </div>
-          )}
         </div>
       )}
 
