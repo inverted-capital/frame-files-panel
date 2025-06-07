@@ -13,7 +13,13 @@ const mockFiles = {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ArtifactFrame
-      mockFiles={mockFiles}
+      mockRepos={{
+        mock: {
+          branches: {
+            main: mockFiles
+          }
+        }
+      }}
       mockFrameProps={{
         target: { did: HOST_SCOPE.did, repo: 'mock', branch: 'main' }
       }}
