@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowUp, Code } from 'lucide-react'
+import { ArrowUp } from 'lucide-react'
 
 interface Props {
   currentPath: string
@@ -28,7 +28,6 @@ const NavigationBar: React.FC<Props> = ({
       </button>
 
       <span className="text-gray-500 mr-2">Path:</span>
-      <Code size={16} className="mr-1 text-blue-600" />
       <span className="text-blue-600 mr-1 font-medium">/</span>
       {currentPath && <span className="text-gray-600">{currentPath}</span>}
     </div>
