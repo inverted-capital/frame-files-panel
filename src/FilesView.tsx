@@ -7,7 +7,6 @@ import FileDetails from './components/FileDetails.tsx'
 
 const FilesView: React.FC = () => {
   const artifact = useArtifact()
-  const scope = artifact.scope as { repo: string; branch: string }
 
   const [currentPath, setCurrentPath] = useState('')
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
@@ -44,9 +43,6 @@ const FilesView: React.FC = () => {
     setSelectedFile(null)
     setShowFileDetails(false)
   }
-
-  const currentBranch = scope.branch
-  const currentRepo = scope.repo
 
   const isAtRoot = !currentPath
 
@@ -87,20 +83,11 @@ const FilesView: React.FC = () => {
         />
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-700">Branch: {currentBranch}</div>
-        </div>
-      </div>
-
-      {currentRepo && (
-        <NavigationBar
-          currentRepo={currentRepo}
-          currentPath={currentPath}
-          isAtRoot={isAtRoot}
-          onNavigateUp={handleNavigateUp}
-        />
-      )}
+      <NavigationBar
+        currentPath={currentPath}
+        isAtRoot={isAtRoot}
+        onNavigateUp={handleNavigateUp}
+      />
 
       <div className="flex flex-1 overflow-hidden">
         <div
@@ -110,7 +97,6 @@ const FilesView: React.FC = () => {
             folderContents={folderContents}
             currentPath={currentPath}
             selectedFile={selectedFile}
-            currentBranch={currentBranch}
             onItemClick={handleItemClick}
           />
         </div>
@@ -118,8 +104,6 @@ const FilesView: React.FC = () => {
         {showFileDetails && selectedFile && (
           <FileDetails
             selectedFile={selectedFile}
-            currentRepo={currentRepo}
-            currentBranch={currentBranch}
             fileData={fileData}
             fileMeta={fileMeta}
             onClose={() => setShowFileDetails(false)}
