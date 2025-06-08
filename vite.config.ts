@@ -18,9 +18,6 @@ export default defineConfig({
     exclude: ['lucide-react']
   },
   base: './',
-  server: {
-    https: useMkcert
-  } as unknown as import('vite').ServerOptions,
   build: {
     sourcemap: true
   }
