@@ -2,14 +2,12 @@ import React from 'react'
 import { ArrowUp, Code } from 'lucide-react'
 
 interface Props {
-  currentRepo: string
   currentPath: string
   isAtRoot: boolean
   onNavigateUp: () => void
 }
 
 const NavigationBar: React.FC<Props> = ({
-  currentRepo,
   currentPath,
   isAtRoot,
   onNavigateUp
@@ -30,17 +28,9 @@ const NavigationBar: React.FC<Props> = ({
       </button>
 
       <span className="text-gray-500 mr-2">Path:</span>
-      <button className="flex items-center text-blue-600 hover:text-blue-800 mr-1">
-        <Code size={16} className="mr-1" />
-        <span className="font-medium">{currentRepo}</span>
-      </button>
-
-      {currentPath && (
-        <>
-          <span className="text-gray-400 mx-1">/</span>
-          <span className="text-gray-600">{currentPath}</span>
-        </>
-      )}
+      <Code size={16} className="mr-1 text-blue-600" />
+      <span className="text-blue-600 mr-1 font-medium">/</span>
+      {currentPath && <span className="text-gray-600">{currentPath}</span>}
     </div>
   </div>
 )

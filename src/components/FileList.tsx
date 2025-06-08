@@ -16,7 +16,6 @@ interface Props {
   folderContents: FileMeta[]
   currentPath: string
   selectedFile: string | null
-  currentBranch: string
   onItemClick: (item: FileItem) => void
 }
 
@@ -24,7 +23,6 @@ const FileList: React.FC<Props> = ({
   folderContents,
   currentPath,
   selectedFile,
-  currentBranch,
   onItemClick
 }) => {
   if (folderContents.length === 0) {
@@ -37,9 +35,7 @@ const FileList: React.FC<Props> = ({
           {currentPath ? 'Empty Folder' : 'No Files Found'}
         </h3>
         <p className="text-gray-500 mb-4">
-          {currentPath
-            ? 'This folder is empty'
-            : `This repository doesn't have any files in the ${currentBranch} branch`}
+          {currentPath ? 'This folder is empty' : 'No files available'}
         </p>
       </div>
     )
