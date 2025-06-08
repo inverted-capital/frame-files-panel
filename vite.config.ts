@@ -19,6 +19,7 @@ export default defineConfig({
   },
   base: './',
   build: {
-    sourcemap: true
+    sourcemap: true,
+    minify: false
   }
 })
