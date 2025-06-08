@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { File, Upload } from 'lucide-react'
 import { useArtifact, useDir, useFile, useMeta } from '@artifact/client/hooks'
-import BranchSelector from './components/BranchSelector.tsx'
 import NavigationBar from './components/NavigationBar.tsx'
 import FileList, { type FileItem } from './components/FileList.tsx'
 import FileDetails from './components/FileDetails.tsx'
@@ -12,33 +11,14 @@ const FilesView: React.FC = () => {
 
   const [currentPath, setCurrentPath] = useState('')
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
-  const [branches, setBranches] = useState<string[]>([])
   const [showFileDetails, setShowFileDetails] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const folderContents = useDir(currentPath || '.') || []
 
   const filePath = selectedFile || ''
   const fileData = useFile(filePath)
   const fileMeta = useMeta(filePath)
-
-  useEffect(() => {
-    let ignore = false
-    artifact.repo.branches
-      .ls()
-      .then((b) => {
-        if (!ignore) setBranches(b)
-      })
-      .catch(() => {
-        if (!ignore) setBranches([])
-      })
-    return () => {
-      ignore = true
-    }
-  }, [artifact])
-
-  const handleBranchChange = (branchName: string) => {
-    artifact.checkout({ branch: branchName })
-  }
 
   const handleItemClick = (item: FileItem) => {
     if (item.isFolder) {
@@ -67,10 +47,6 @@ const FilesView: React.FC = () => {
 
   const currentBranch = scope.branch
   const currentRepo = scope.repo
-  const availableBranches = branches.map((b) => ({
-    name: b,
-    isDefault: b === currentBranch
-  }))
 
   const isAtRoot = !currentPath
 
@@ -81,19 +57,39 @@ const FilesView: React.FC = () => {
           <File className="mr-2" size={24} />
           Files
         </h1>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center transition-colors">
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center transition-colors"
+          onClick={() => fileInputRef.current?.click()}
+        >
           <Upload size={16} className="mr-2" />
           Upload
         </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          className="hidden"
+          onChange={async (e) => {
+            const files = e.target.files
+            if (!files) return
+            for (const file of files) {
+              const data = new Uint8Array(await file.arrayBuffer())
+              const path = currentPath
+                ? `${currentPath}/${file.name}`
+                : file.name
+              artifact.files.write.binary(path, data)
+            }
+            if (artifact.files.isDirty()) {
+              await artifact.branch.write.commit('Upload files')
+            }
+            e.target.value = ''
+          }}
+        />
       </div>
 
       <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
         <div className="flex items-center gap-4">
-          <BranchSelector
-            currentBranch={currentBranch}
-            branches={availableBranches}
-            onChange={handleBranchChange}
-          />
+          <div className="text-sm text-gray-700">Branch: {currentBranch}</div>
         </div>
       </div>
 
