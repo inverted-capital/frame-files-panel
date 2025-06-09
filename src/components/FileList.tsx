@@ -52,6 +52,7 @@ const FileList: React.FC<Props> = ({
 
       <div className="overflow-auto">
         {[...folderContents]
+          .filter((m) => m.path !== '.gitkeep')
           .sort((a, b) => {
             if (a.type === 'tree' && b.type !== 'tree') return -1
             if (a.type !== 'tree' && b.type === 'tree') return 1
