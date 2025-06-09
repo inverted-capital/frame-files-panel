@@ -1,16 +1,18 @@
 import React from 'react'
-import { ArrowUp } from 'lucide-react'
+import { ArrowUp, ChevronRight } from 'lucide-react'
 
 interface Props {
   currentPath: string
   isAtRoot: boolean
   onNavigateUp: () => void
+  onNavigateTo: (path: string) => void
 }
 
 const NavigationBar: React.FC<Props> = ({
   currentPath,
   isAtRoot,
-  onNavigateUp
+  onNavigateUp,
+  onNavigateTo
 }) => (
   <div className="bg-white rounded-lg border border-gray-200 p-3 mb-4 flex items-center">
     <div className="flex items-center">
@@ -28,8 +30,29 @@ const NavigationBar: React.FC<Props> = ({
       </button>
 
       <span className="text-gray-500 mr-2">Path:</span>
-      <span className="text-blue-600 mr-1 font-medium">/</span>
-      {currentPath && <span className="text-gray-600">{currentPath}</span>}
+      <button
+        onClick={() => onNavigateTo('')}
+        className="text-blue-600 mr-1 font-medium hover:text-blue-800"
+      >
+        /
+      </button>
+      {currentPath
+        .split('/')
+        .filter((p) => p)
+        .map((part, idx, arr) => {
+          const path = arr.slice(0, idx + 1).join('/')
+          return (
+            <React.Fragment key={path}>
+              <ChevronRight size={16} className="text-gray-400" />
+              <button
+                onClick={() => onNavigateTo(path)}
+                className="text-blue-600 ml-1 hover:text-blue-800"
+              >
+                {part}
+              </button>
+            </React.Fragment>
+          )
+        })}
     </div>
   </div>
 )

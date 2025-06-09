@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { ChevronDown, FileText, Edit, Download, File } from 'lucide-react'
+import { marked } from 'marked'
 import { useArtifact } from '@artifact/client/hooks'
 
 interface Props {
@@ -38,6 +39,37 @@ const FileDetails: React.FC<Props> = ({
     link.click()
     URL.revokeObjectURL(url)
   }
+
+  const preview = useMemo(() => {
+    if (!fileData) return null
+    const ext = selectedFile.split('.').pop()?.toLowerCase() || ''
+    const blob = new Blob([fileData])
+
+    if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(ext)) {
+      const url = URL.createObjectURL(blob)
+      return (
+        <img
+          src={url}
+          className="max-h-96 mx-auto"
+          onLoad={() => URL.revokeObjectURL(url)}
+        />
+      )
+    }
+
+    const text = new TextDecoder().decode(fileData)
+
+    if (['md', 'markdown'].includes(ext)) {
+      const html = marked.parse(text)
+      return (
+        <div
+          className="markdown-preview"
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      )
+    }
+
+    return <pre className="whitespace-pre-wrap text-sm font-mono">{text}</pre>
+  }, [fileData, selectedFile])
 
   return (
     <div className="w-1/2 pl-4 overflow-auto">
@@ -104,14 +136,13 @@ const FileDetails: React.FC<Props> = ({
 
         <div className="border-t border-gray-200 pt-4 mt-4">
           <h4 className="font-medium mb-2">Preview</h4>
-          <div className="bg-gray-50 p-4 rounded-md h-40 overflow-auto">
-            <div className="text-gray-400 text-center flex flex-col items-center justify-center h-full">
-              <FileText size={24} className="mb-2" />
-              <span>Preview not available</span>
-              <span className="text-xs mt-1">
-                Click "View Content" to see the file
-              </span>
-            </div>
+          <div className="bg-gray-50 p-4 rounded-md max-h-96 overflow-auto">
+            {preview || (
+              <div className="text-gray-400 text-center flex flex-col items-center justify-center h-full">
+                <FileText size={24} className="mb-2" />
+                <span>Preview not available</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
