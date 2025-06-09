@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowUp, ChevronRight } from 'lucide-react'
+import { ArrowUp, ChevronRight, FolderRoot } from 'lucide-react'
 
 interface Props {
   currentPath: string
@@ -29,12 +29,12 @@ const NavigationBar: React.FC<Props> = ({
         <span>Up</span>
       </button>
 
-      <span className="text-gray-500 mr-2">Path:</span>
       <button
         onClick={() => onNavigateTo('')}
-        className="text-blue-600 mr-1 font-medium hover:text-blue-800"
+        title="Filesystem Root"
+        className="text-blue-600 mr-1 hover:text-blue-800"
       >
-        /
+        <FolderRoot size={16} />
       </button>
       {currentPath
         .split('/')
