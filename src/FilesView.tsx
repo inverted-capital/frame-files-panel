@@ -44,6 +44,12 @@ const FilesView: React.FC = () => {
     setShowFileDetails(false)
   }
 
+  const handleNavigateTo = (path: string) => {
+    setCurrentPath(path)
+    setSelectedFile(null)
+    setShowFileDetails(false)
+  }
+
   const isAtRoot = !currentPath
 
   return (
@@ -87,6 +93,7 @@ const FilesView: React.FC = () => {
         currentPath={currentPath}
         isAtRoot={isAtRoot}
         onNavigateUp={handleNavigateUp}
+        onNavigateTo={handleNavigateTo}
       />
 
       <div className="flex flex-1 overflow-hidden">
