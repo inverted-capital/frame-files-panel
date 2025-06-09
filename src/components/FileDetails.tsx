@@ -1,5 +1,12 @@
-import React, { useMemo } from 'react'
-import { ChevronDown, FileText, Edit, Download, File } from 'lucide-react'
+import React, { useMemo, useState, useEffect } from 'react'
+import {
+  ChevronDown,
+  FileText,
+  Edit,
+  Download,
+  File,
+  Pencil
+} from 'lucide-react'
 import { marked } from 'marked'
 import { useArtifact } from '@artifact/client/hooks'
 
@@ -8,6 +15,7 @@ interface Props {
   fileData: ArrayBuffer | undefined
   fileMeta: { type: string } | null | false | undefined
   onClose: () => void
+  onRename: (newPath: string) => void
 }
 
 const formatFileSize = (bytes: number) => {
@@ -21,9 +29,33 @@ const FileDetails: React.FC<Props> = ({
   selectedFile,
   fileData,
   fileMeta,
-  onClose
+  onClose,
+  onRename
 }) => {
   const artifact = useArtifact()
+
+  const [isRenaming, setIsRenaming] = useState(false)
+  const [renameParts, setRenameParts] = useState<string[]>(
+    selectedFile.split('/')
+  )
+
+  useEffect(() => {
+    setRenameParts(selectedFile.split('/'))
+  }, [selectedFile])
+
+  const handleRenameSubmit = async () => {
+    const newPath = renameParts.join('/')
+    if (!newPath || newPath === selectedFile) {
+      setIsRenaming(false)
+      return
+    }
+    await artifact.files.write.mv(selectedFile, newPath)
+    if (artifact.files.isDirty()) {
+      await artifact.branch.write.commit(`Rename ${selectedFile} to ${newPath}`)
+    }
+    setIsRenaming(false)
+    onRename(newPath)
+  }
 
   const handleDownload = async () => {
     let data = fileData
@@ -80,10 +112,33 @@ const FileDetails: React.FC<Props> = ({
               <File size={20} className="text-gray-500" />
             </div>
             <div>
-              <h3 className="font-medium text-lg">
-                {selectedFile.split('/').pop()}
-              </h3>
-              <div className="text-sm text-gray-500">{selectedFile}</div>
+              {isRenaming ? (
+                <div className="flex flex-wrap items-center">
+                  {renameParts.map((part, i) => (
+                    <React.Fragment key={i}>
+                      <input
+                        className="border px-1 py-0.5 text-sm rounded w-24 mr-1"
+                        value={part}
+                        onChange={(e) => {
+                          const np = [...renameParts]
+                          np[i] = e.target.value
+                          setRenameParts(np)
+                        }}
+                      />
+                      {i < renameParts.length - 1 && (
+                        <span className="mx-1">/</span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <h3 className="font-medium text-lg">
+                    {selectedFile.split('/').pop()}
+                  </h3>
+                  <div className="text-sm text-gray-500">{selectedFile}</div>
+                </>
+              )}
             </div>
           </div>
           <button
@@ -124,6 +179,31 @@ const FileDetails: React.FC<Props> = ({
               <Edit size={14} className="mr-1" />
               Edit
             </button>
+            {isRenaming ? (
+              <>
+                <button
+                  className="px-3 py-1.5 bg-green-50 text-green-600 rounded-md flex items-center text-sm hover:bg-green-100"
+                  onClick={handleRenameSubmit}
+                >
+                  <Pencil size={14} className="mr-1" />
+                  Save
+                </button>
+                <button
+                  className="px-3 py-1.5 bg-gray-50 text-gray-600 rounded-md flex items-center text-sm hover:bg-gray-100"
+                  onClick={() => setIsRenaming(false)}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button
+                className="px-3 py-1.5 bg-yellow-50 text-yellow-600 rounded-md flex items-center text-sm hover:bg-yellow-100"
+                onClick={() => setIsRenaming(true)}
+              >
+                <Pencil size={14} className="mr-1" />
+                Rename
+              </button>
+            )}
             <button
               className="px-3 py-1.5 bg-green-50 text-green-600 rounded-md flex items-center text-sm hover:bg-green-100"
               onClick={handleDownload}

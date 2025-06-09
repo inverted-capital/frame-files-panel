@@ -13,6 +13,26 @@ const FilesView: React.FC = () => {
   const [showFileDetails, setShowFileDetails] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const handleCreateFile = async () => {
+    const name = prompt('Enter new file name')
+    if (!name) return
+    const path = currentPath ? `${currentPath}/${name}` : name
+    artifact.files.write.text(path, '')
+    if (artifact.files.isDirty()) {
+      await artifact.branch.write.commit(`Add file ${name}`)
+    }
+  }
+
+  const handleCreateFolder = async () => {
+    const name = prompt('Enter new folder name')
+    if (!name) return
+    const dir = currentPath ? `${currentPath}/${name}` : name
+    artifact.files.write.text(`${dir}/.gitkeep`, '')
+    if (artifact.files.isDirty()) {
+      await artifact.branch.write.commit(`Add folder ${name}`)
+    }
+  }
+
   const folderContents = useDir(currentPath || '.') || []
 
   const filePath = selectedFile || ''
@@ -59,13 +79,27 @@ const FilesView: React.FC = () => {
           <File className="mr-2" size={24} />
           Files
         </h1>
-        <button
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center transition-colors"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <Upload size={16} className="mr-2" />
-          Upload
-        </button>
+        <div className="flex gap-2">
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center transition-colors"
+            onClick={handleCreateFile}
+          >
+            New File
+          </button>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center transition-colors"
+            onClick={handleCreateFolder}
+          >
+            New Folder
+          </button>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center transition-colors"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload size={16} className="mr-2" />
+            Upload
+          </button>
+        </div>
         <input
           ref={fileInputRef}
           type="file"
@@ -114,6 +148,7 @@ const FilesView: React.FC = () => {
             fileData={fileData}
             fileMeta={fileMeta}
             onClose={() => setShowFileDetails(false)}
+            onRename={(newPath) => setSelectedFile(newPath)}
           />
         )}
       </div>
