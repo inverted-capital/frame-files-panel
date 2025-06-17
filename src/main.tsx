@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ArtifactFrame, ArtifactSyncer } from '@artifact/client/react'
 import { HOST_SCOPE } from '@artifact/client/api'
-import FilesView from './FilesView.tsx'
+import FilesView from './App.tsx'
 import './index.css'
 
 const mockFiles = {

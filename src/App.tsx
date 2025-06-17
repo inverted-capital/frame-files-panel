@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { File, Upload } from 'lucide-react'
 import { useArtifact, useDir, useFile, useMeta } from '@artifact/client/hooks'
 import NavigationBar from './components/NavigationBar.tsx'
 import FileList, { type FileItem } from './components/FileList.tsx'
 import FileDetails from './components/FileDetails.tsx'
 
-const FilesView: React.FC = () => {
+export default function App() {
   const artifact = useArtifact()
 
   const [currentPath, setCurrentPath] = useState('')
@@ -73,7 +73,7 @@ const FilesView: React.FC = () => {
   const isAtRoot = !currentPath
 
   return (
-    <div className="animate-fadeIn h-full flex flex-col">
+    <div className="p-6 animate-fadeIn h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold flex items-center">
           <File className="mr-2" size={24} />
@@ -155,5 +155,3 @@ const FilesView: React.FC = () => {
     </div>
   )
 }
-
-export default FilesView
