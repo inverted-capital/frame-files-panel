@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ArtifactFrame, ArtifactSyncer } from '@artifact/client/react'
+import { ArtifactFrame } from '@artifact/client/react'
 import { HOST_SCOPE } from '@artifact/client/api'
 import FilesView from './App.tsx'
 import './index.css'
@@ -20,9 +20,7 @@ createRoot(document.getElementById('root')!).render(
         target: { did: HOST_SCOPE.did, repo: 'mock', branch: 'main' }
       }}
     >
-      <ArtifactSyncer>
-        <FilesView />
-      </ArtifactSyncer>
+      <FilesView />
     </ArtifactFrame>
   </StrictMode>
 )
