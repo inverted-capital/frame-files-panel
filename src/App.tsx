@@ -7,12 +7,20 @@ import FileDetails from './components/FileDetails.tsx'
 
 export default function App() {
   const artifact = useArtifact()
-
   const [currentPath, setCurrentPath] = useState('')
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [showFileDetails, setShowFileDetails] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const folderContents = useDir(currentPath || '.') || []
+
+  const filePath = selectedFile || ''
+  const fileData = useFile(filePath)
+  const fileMeta = useMeta(filePath)
+
+  if (!artifact) {
+    return <div className="p-6">Loading...</div>
+  }
   const handleCreateFile = async () => {
     const name = prompt('Enter new file name')
     if (!name) return
@@ -32,12 +40,6 @@ export default function App() {
       await artifact.branch.write.commit(`Add folder ${name}`)
     }
   }
-
-  const folderContents = useDir(currentPath || '.') || []
-
-  const filePath = selectedFile || ''
-  const fileData = useFile(filePath)
-  const fileMeta = useMeta(filePath)
 
   const handleItemClick = (item: FileItem) => {
     if (item.isFolder) {

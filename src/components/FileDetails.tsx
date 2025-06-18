@@ -33,7 +33,6 @@ const FileDetails: React.FC<Props> = ({
   onRename
 }) => {
   const artifact = useArtifact()
-
   const [isRenaming, setIsRenaming] = useState(false)
   const [renameParts, setRenameParts] = useState<string[]>(
     selectedFile.split('/')
@@ -42,35 +41,6 @@ const FileDetails: React.FC<Props> = ({
   useEffect(() => {
     setRenameParts(selectedFile.split('/'))
   }, [selectedFile])
-
-  const handleRenameSubmit = async () => {
-    const newPath = renameParts.join('/')
-    if (!newPath || newPath === selectedFile) {
-      setIsRenaming(false)
-      return
-    }
-    await artifact.files.write.mv(selectedFile, newPath)
-    if (artifact.files.isDirty()) {
-      await artifact.branch.write.commit(`Rename ${selectedFile} to ${newPath}`)
-    }
-    setIsRenaming(false)
-    onRename(newPath)
-  }
-
-  const handleDownload = async () => {
-    let data = fileData
-    if (!data) {
-      data = await artifact.files.read.binary(selectedFile)
-    }
-    if (!data) return
-    const blob = new Blob([data])
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = selectedFile.split('/').pop() || 'file'
-    link.click()
-    URL.revokeObjectURL(url)
-  }
 
   const preview = useMemo(() => {
     if (!fileData) return null
@@ -102,6 +72,39 @@ const FileDetails: React.FC<Props> = ({
 
     return <pre className="whitespace-pre-wrap text-sm font-mono">{text}</pre>
   }, [fileData, selectedFile])
+
+  if (!artifact) {
+    return null
+  }
+
+  const handleRenameSubmit = async () => {
+    const newPath = renameParts.join('/')
+    if (!newPath || newPath === selectedFile) {
+      setIsRenaming(false)
+      return
+    }
+    await artifact.files.write.mv(selectedFile, newPath)
+    if (artifact.files.isDirty()) {
+      await artifact.branch.write.commit(`Rename ${selectedFile} to ${newPath}`)
+    }
+    setIsRenaming(false)
+    onRename(newPath)
+  }
+
+  const handleDownload = async () => {
+    let data = fileData
+    if (!data) {
+      data = await artifact.files.read.binary(selectedFile)
+    }
+    if (!data) return
+    const blob = new Blob([data])
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = selectedFile.split('/').pop() || 'file'
+    link.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <div className="w-1/2 pl-4 overflow-auto">
