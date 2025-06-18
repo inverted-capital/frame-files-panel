@@ -5,7 +5,8 @@ import {
   Edit,
   Download,
   File,
-  Pencil
+  Pencil,
+  Trash
 } from 'lucide-react'
 import { marked } from 'marked'
 import { useArtifact } from '@artifact/client/hooks'
@@ -104,6 +105,15 @@ const FileDetails: React.FC<Props> = ({
     link.download = selectedFile.split('/').pop() || 'file'
     link.click()
     URL.revokeObjectURL(url)
+  }
+
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this item?')) return
+    await artifact.files.write.rm(selectedFile)
+    if (artifact.files.isDirty()) {
+      await artifact.branch.write.commit(`Delete ${selectedFile}`)
+    }
+    onClose()
   }
 
   return (
@@ -213,6 +223,13 @@ const FileDetails: React.FC<Props> = ({
             >
               <Download size={14} className="mr-1" />
               Download
+            </button>
+            <button
+              className="px-3 py-1.5 bg-red-50 text-red-600 rounded-md flex items-center text-sm hover:bg-red-100"
+              onClick={handleDelete}
+            >
+              <Trash size={14} className="mr-1" />
+              Delete
             </button>
           </div>
         </div>
