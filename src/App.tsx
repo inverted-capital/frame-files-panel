@@ -12,7 +12,7 @@ export default function App() {
   const [showFileDetails, setShowFileDetails] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const folderContents = useDir(currentPath || '.') || []
+  const folderContents = useDir(currentPath || '.')
 
   const filePath = selectedFile || ''
   const fileData = useFile(filePath)

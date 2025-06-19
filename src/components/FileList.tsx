@@ -1,5 +1,5 @@
 import React from 'react'
-import { File, Folder, ChevronRight } from 'lucide-react'
+import { File, Folder, ChevronRight, Loader } from 'lucide-react'
 
 interface FileMeta {
   path: string
@@ -13,7 +13,7 @@ export interface FileItem {
 }
 
 interface Props {
-  folderContents: FileMeta[]
+  folderContents: FileMeta[] | undefined
   currentPath: string
   selectedFile: string | null
   onItemClick: (item: FileItem) => void
@@ -25,6 +25,14 @@ const FileList: React.FC<Props> = ({
   selectedFile,
   onItemClick
 }) => {
+  if (!folderContents) {
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-8 flex justify-center items-center h-full">
+        <Loader className="animate-spin text-gray-400" />
+      </div>
+    )
+  }
+
   if (folderContents.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
