@@ -134,7 +134,7 @@ export default function App() {
         onNavigateTo={handleNavigateTo}
       />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 ">
         <div
           className={`${showFileDetails && selectedFile ? 'w-1/2' : 'w-full'} overflow-auto`}
         >

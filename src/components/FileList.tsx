@@ -50,7 +50,7 @@ const FileList: React.FC<Props> = ({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden h-full">
+    <div className="bg-white rounded-lg border border-gray-200  h-full">
       <div className="grid grid-cols-12 gap-4 p-4 font-medium text-gray-500 text-sm border-b border-gray-200">
         <div className="col-span-5">Name</div>
         <div className="col-span-3">Modified</div>
