@@ -42,20 +42,24 @@ export default function App() {
     }
   }
 
-  const handleItemClick = (item: FileItem) => {
+  const handleItemClick = (item: FileItem, clickCount: number) => {
+    const path = currentPath ? `${currentPath}/${item.name}` : item.name
+
     if (item.isFolder) {
-      setCurrentPath(currentPath ? currentPath + '/' + item.name : item.name)
-      setShowFileDetails(false)
-      setSelectedFile(null)
-    } else {
-      const fullPath = currentPath ? currentPath + '/' + item.name : item.name
-      if (selectedFile === fullPath) {
-        setSelectedFile(null)
+      if (clickCount > 1) {
+        setCurrentPath(path)
         setShowFileDetails(false)
-      } else {
-        setSelectedFile(fullPath)
-        setShowFileDetails(true)
+        setSelectedFile(null)
+        return
       }
+    }
+
+    if (selectedFile === path) {
+      setSelectedFile(null)
+      setShowFileDetails(false)
+    } else {
+      setSelectedFile(path)
+      setShowFileDetails(true)
     }
   }
 

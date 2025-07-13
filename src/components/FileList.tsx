@@ -16,7 +16,7 @@ interface Props {
   folderContents: FileMeta[] | undefined
   currentPath: string
   selectedFile: string | null
-  onItemClick: (item: FileItem) => void
+  onItemClick: (item: FileItem, clickCount: number) => void
 }
 
 const FileList: React.FC<Props> = ({
@@ -80,7 +80,7 @@ const FileList: React.FC<Props> = ({
                     ? 'bg-blue-50 border-l-4 border-blue-500'
                     : ''
                 }`}
-                onClick={() => onItemClick(item)}
+                onClick={(e) => onItemClick(item, e.detail)}
               >
                 <div className="col-span-5 flex items-center">
                   <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center mr-3">
